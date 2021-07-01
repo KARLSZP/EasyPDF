@@ -1,4 +1,4 @@
-# EasyPDF - version 1.1
+# EasyPDF - version 1.2
 
 EasyPDF provides several experimental(beta) functions on PDF files.
 
@@ -13,14 +13,20 @@ EasyPDF provides several experimental(beta) functions on PDF files.
 
 ```shell
 git clone git@github.com:KARLSZP/EasyPDF.git
-cd EasyPDF
+cd EasyPDF/Linux
 ```
 
 
 
 ### Windows (Win 10+)
 
-(Not Implemented)
+*   Python 3.8
+*   Git
+
+```shell
+git clone git@github.com:KARLSZP/EasyPDF.git
+cd EasyPDF\\Win
+```
 
 
 
@@ -34,6 +40,8 @@ pip install -r requirements.txt
 
 ## Usage
 
+### Linux (Debian)
+
 ```shell
 chmod +x ./main.py
 ./main.py
@@ -44,6 +52,16 @@ or
 ```shell
 python main.py
 ```
+
+
+
+### Windows (Win 10+)
+
+```shell
+python main.py
+```
+
+
 
 
 
@@ -86,3 +104,4 @@ python main.py
 ## Updates
 
 *   2021.06.26 First update.
+*   2021.07.01 Win10 version updated.

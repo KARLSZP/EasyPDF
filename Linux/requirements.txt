@@ -1,0 +1,4 @@
+PyQt5==5.15.4
+qpageview==0.6.0
+python-poppler-qt5==21.1.0
+PyPDF3==1.0.5
