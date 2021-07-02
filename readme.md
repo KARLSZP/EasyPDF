@@ -1,4 +1,4 @@
-# EasyPDF - version 1.2
+# EasyPDF - version 1.3
 
 EasyPDF provides several experimental(beta) functions on PDF files.
 
@@ -96,7 +96,6 @@ python main.py
 ## Further
 
 *   more functions
-*   output PDF(s) compression
 *   .deb package and windows installation
 
 
@@ -105,3 +104,4 @@ python main.py
 
 *   2021.06.26 First update.
 *   2021.07.01 Win10 version updated.
+*   2021.07.02 Output PDF(s) compression.
