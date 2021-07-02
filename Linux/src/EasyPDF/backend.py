@@ -61,17 +61,17 @@ class FileBase():
             with open(path, "rb") as f:
                 self.bytesFiles[path] = QByteArray(f.read())
 
-    def save(self, paths):
-        assert (len(paths) == len(self.currentTempFiles))
+    def save(self, src, dst=None):
+        if dst:
+            assert (len(src) == len(dst))
 
-        for src, dst in zip(self.currentTempFiles, paths):
-            shutil.copyfile(src, dst)
+            for s, d in zip(src, dst):
+                shutil.copyfile(s, d)
+        else:
+            assert (len(src) == len(self.currentTempFiles))
 
-    def save(self, src, dst):
-        assert (len(src) == len(dst))
-
-        for s, d in zip(src, dst):
-            shutil.copyfile(s, d)
+            for s, d in zip(self.currentTempFiles, src):
+                shutil.copyfile(s, d)
 
     def getOutDir(self):
         return self.outPath

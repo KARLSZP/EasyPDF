@@ -1,7 +1,8 @@
 import PyPDF3
 import shutil
-from datetime import datetime
 import os
+from datetime import datetime
+from third_party.gsRunner import runGs
 
 
 class FileBase():
@@ -23,6 +24,8 @@ class FileBase():
                                                 self.previewFileName)
             self.timeStampStyle = config["backend"]["timeStampStyle"].strip(
                 "'")
+            self.gsPath = config["backend"]["gsPath"]
+            print(self.rootPath)
         self.makeDir(self.outPath)
         self.makeDir(self.tmpPath, self.clearTempFiles)
         # if not os.path.exists(self.outPath):
@@ -101,6 +104,7 @@ class MainEngine(FileBase):
         if path:
             with open(path, "wb") as resultFileStream:
                 resultFile.write(resultFileStream)
+            runGs(self.gsPath, path, path)
         else:
             with open(self.tmpPreviewFile, "wb") as resultFileStream:
                 resultFile.write(resultFileStream)
@@ -115,12 +119,14 @@ class MainEngine(FileBase):
             path += ".pdf"
         if os.path.exists(self.tmpPreviewFile):
             shutil.copyfile(self.tmpPreviewFile, path)
+            runGs(self.gsPath, path, path)
 
     def mergeFiles(self, paths, savePath):
         merger = PyPDF3.PdfFileMerger()
         for path in paths:
             merger.append(path)
         merger.write(savePath)
+        runGs(self.gsPath, savePath, savePath)
 
     def createBlankPage(self, width, height):
         return PyPDF3.pdf.PageObject.createBlankPage(None, width, height)
