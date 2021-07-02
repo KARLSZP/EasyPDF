@@ -1,8 +1,9 @@
-from PyQt5.QtCore import QByteArray
 import PyPDF3
 import shutil
-from datetime import datetime
 import os
+from PyQt5.QtCore import QByteArray
+from datetime import datetime
+from third_party.gsRunner import runGs
 
 
 class FileBase():
@@ -10,6 +11,7 @@ class FileBase():
         self.initFiles(config)
 
     def initFiles(self, config=None):
+        self.root = os.getcwd()
         self.selectedFiles = []
         self.originalTempFiles = []
         self.currentTempFiles = []
@@ -23,6 +25,7 @@ class FileBase():
                                                  self.previewFileName)
             self.timeStampStyle = config["backend"]["timeStampStyle"].strip(
                 "'")
+            self.gsPath = config["backend"]["gsPath"]
         self.makeDir(self.outPath)
         self.makeDir(self.tmpPath, self.clearTempFiles)
         # if not os.path.exists(self.outPath):
@@ -47,10 +50,10 @@ class FileBase():
         self.initFiles()
         self.selectedFiles = paths
         self.originalTempFiles = ["{}/{}/.easyOrigin_{}".format(
-            os.path.split(p)[0], self.tmpPath, os.path.split(p)[1])
+            self.root, self.tmpPath, os.path.split(p)[1])
             for p in paths]
         self.currentTempFiles = ["{}/{}/.easyCurrent_{}".format(
-            os.path.split(p)[0], self.tmpPath, os.path.split(p)[1])
+            self.root, self.tmpPath, os.path.split(p)[1])
             for p in paths]
         self.save(paths, self.originalTempFiles)
         self.save(paths, self.currentTempFiles)
@@ -102,6 +105,7 @@ class MainEngine(FileBase):
         if path:
             with open(path, "wb") as resultFileStream:
                 resultFile.write(resultFileStream)
+            runGs(self.gsPath, path, path)
         else:
             with open(self.tmpPreviewFile, "wb") as resultFileStream:
                 resultFile.write(resultFileStream)
@@ -117,12 +121,14 @@ class MainEngine(FileBase):
             path += ".pdf"
         if os.path.exists(self.tmpPreviewFile):
             shutil.copyfile(self.tmpPreviewFile, path)
+            runGs(self.gsPath, path, path)
 
     def mergeFiles(self, paths, savePath):
         merger = PyPDF3.PdfFileMerger()
         for path in paths:
             merger.append(path)
         merger.write(savePath)
+        runGs(self.gsPath, savePath, savePath)
 
     def createBlankPage(self, width, height):
         return PyPDF3.pdf.PageObject.createBlankPage(None, width, height)
@@ -134,13 +140,12 @@ class MainEngine(FileBase):
         if ".easyCurrent_" in fileName:
             self.currentFileName = fileName
         else:
-            header, tail = os.path.split(fileName)
+            _, tail = os.path.split(fileName)
             self.currentFileName = "{}/{}/.easyCurrent_{}".format(
-                header, self.tmpPath, tail)
+                self.root, self.tmpPath, tail)
 
     def getOriginalFile(self) -> PyPDF3.PdfFileReader:
         if self.currentFileName:
-            print(self.currentFileName, self.origins.keys())
             return self.origins[self.currentFileName][0]
 
     def getCurrentFile(self) -> PyPDF3.PdfFileReader:
